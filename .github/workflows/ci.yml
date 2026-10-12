@@ -35,7 +35,9 @@ jobs:
           fi
           echo "PakScope stayed alive through startup smoke test"
       - name: Verify DEB package metadata
-        run: dpkg-deb -f dist/pakscope_0.1.1_amd64.deb Package Version Architecture
+        run: |
+          dpkg-deb -f dist/pakscope_0.1.1_amd64.deb Package Version Architecture
+          test "$(dpkg-deb -c dist/pakscope_0.1.1_amd64.deb | head -n 1 | awk '{print $1}')" = "drwxr-xr-x"
       - uses: actions/upload-artifact@v4
         with:
           name: pakscope-ubuntu-amd64-preview
