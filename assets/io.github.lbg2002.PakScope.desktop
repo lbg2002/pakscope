@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=PakScope
+Name[zh_CN]=包览
+GenericName=Installed Application Inventory
+GenericName[zh_CN]=软件资产管理器
+Comment=See what is installed and where it came from
+Comment[zh_CN]=查看安装的软件、来源与位置
+Exec=pakscope
+Icon=io.github.lbg2002.PakScope
+Terminal=false
+Categories=System;Utility;
+StartupNotify=true
+Keywords=packages;apps;apt;snap;flatpak;软件;安装;
