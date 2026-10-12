@@ -9,6 +9,8 @@ ARCH="$(dpkg --print-architecture)"
 [[ -f Cargo.lock ]] || cargo generate-lockfile
 cargo build --locked --release --bin pakscope --bin pakscope-scan
 STAGING="$(mktemp -d)"
+# dpkg-deb archives the staging root: ship standard directory permissions.
+chmod 755 "$STAGING"
 trap 'rm -rf "$STAGING"' EXIT
 install -Dm755 target/release/pakscope "$STAGING/usr/bin/pakscope"
 install -Dm755 target/release/pakscope-scan "$STAGING/usr/bin/pakscope-scan"
