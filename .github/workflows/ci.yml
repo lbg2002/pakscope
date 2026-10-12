@@ -1,0 +1,30 @@
+name: Build and verify
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install GTK development dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential pkg-config libgtk-4-dev libadwaita-1-dev libglib2.0-dev
+      - name: Resolve dependency lockfile (when not yet committed)
+        run: test -f Cargo.lock || cargo generate-lockfile
+      - name: Verify scanners independently of GTK
+        run: cargo test --locked --no-default-features
+      - name: Verify full desktop compilation
+        run: cargo check --locked --all-targets
+      - name: Build .deb
+        run: bash scripts/build-deb.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pakscope-ubuntu-amd64-preview
+          path: dist/*.deb
+          if-no-files-found: error
