@@ -1,0 +1,7 @@
+/target
+/dist
+*.deb
+*.swp
+*.swo
+.DS_Store
+.env
