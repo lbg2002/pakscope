@@ -14,7 +14,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Install GTK development dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential pkg-config libgtk-4-dev libadwaita-1-dev libglib2.0-dev
+        run: sudo apt-get update && sudo apt-get install -y build-essential pkg-config libgtk-4-dev libadwaita-1-dev libglib2.0-dev xvfb xauth dbus-x11
       - name: Resolve dependency lockfile (when not yet committed)
         run: test -f Cargo.lock || cargo generate-lockfile
       - name: Verify scanners independently of GTK
@@ -23,6 +23,19 @@ jobs:
         run: cargo check --locked --all-targets
       - name: Build .deb
         run: bash scripts/build-deb.sh
+      - name: Smoke-test GTK application startup (Xvfb)
+        run: |
+          set +e
+          timeout 12s xvfb-run -a dbus-run-session -- ./target/release/pakscope
+          result=$?
+          set -e
+          if [ "$result" -ne 124 ]; then
+            echo "PakScope closed unexpectedly during startup (exit $result)" >&2
+            exit 1
+          fi
+          echo "PakScope stayed alive through startup smoke test"
+      - name: Verify DEB package metadata
+        run: dpkg-deb -f dist/pakscope_0.1.1_amd64.deb Package Version Architecture
       - uses: actions/upload-artifact@v4
         with:
           name: pakscope-ubuntu-amd64-preview

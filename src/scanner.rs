@@ -131,6 +131,25 @@ fn dpkg_versions() -> HashMap<String, (String, Option<u64>)> {
     info
 }
 
+/// Resolve an Exec field without executing it. Unknown, wrapped or environment-driven
+/// launch commands intentionally yield no claimed installation path.
+fn executable_from_desktop(exec: &str) -> String {
+    let Some(command) = exec.split_whitespace().next() else { return String::new(); };
+    if command.starts_with('\"') || command == "env" || command.starts_with('%') { return String::new(); }
+    let p = Path::new(command);
+    if p.is_absolute() {
+        return if p.is_file() { p.display().to_string() } else { String::new() };
+    }
+    if command.contains('/') { return String::new(); }
+    if let Some(paths) = std::env::var_os("PATH") {
+        for dir in std::env::split_paths(&paths) {
+            let file = dir.join(command);
+            if file.is_file() { return file.display().to_string(); }
+        }
+    }
+    String::new()
+}
+
 fn apt_and_manual() -> Vec<AppEntry> {
     let owners = dpkg_owners();
     let versions = dpkg_versions();
@@ -148,8 +167,7 @@ fn apt_and_manual() -> Vec<AppEntry> {
             let (version, size) = owner.and_then(|o| versions.get(o)).cloned().unwrap_or(("—".to_string(), None));
             apps.push(AppEntry {
                 id, name: meta.name, version, source,
-                path: owner.map(|_| "/usr".to_string())
-                    .unwrap_or_else(|| file.parent().unwrap_or(Path::new("/")).display().to_string()),
+                path: executable_from_desktop(&meta.exec),
                 launcher: filename, icon: meta.icon, command: meta.exec,
                 size_kib: size,
                 confidence: if owner.is_some() { "dpkg 文件清单匹配" } else { "未找到 dpkg 文件归属，可能为手动安装" }.into(),
@@ -258,6 +276,12 @@ mod tests {
         assert_eq!(item.exec, "example %U");
         assert!(desktop_parse("[Desktop Entry]\nType=Application\nName=Hidden\nNoDisplay=true\n").is_none());
         assert!(desktop_parse("[Desktop Entry]\nType=Link\nName=Site\n").is_none());
+    }
+    #[test]
+    fn executable_resolver_rejects_uncertain_commands() {
+        assert_eq!(executable_from_desktop("env FOO=1 app %U"), "");
+        assert_eq!(executable_from_desktop("/does/not/exist %f"), "");
+        assert_eq!(executable_from_desktop(""), "");
     }
     #[test]
     fn source_labels_match_ui() {
