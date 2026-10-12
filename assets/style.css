@@ -1,64 +1,40 @@
-/* PakScope 0.1 — native libadwaita colors, rounded but restrained. */
-.app-root { background: @window_bg_color; }
+/* PakScope 0.1.1: dense native libadwaita layout, no ornamental banners. */
 .sidebar {
-    background: alpha(@accent_bg_color, 0.035);
-    border-right: 1px solid alpha(@window_fg_color, 0.065);
-    padding: 30px 16px 20px 20px;
+    background: alpha(@accent_bg_color, .035);
+    border-right: 1px solid alpha(@window_fg_color, .055);
+    padding: 19px 9px 12px 9px;
 }
-.brand-name { font-weight: 900; font-size: 15px; letter-spacing: 1.3px; }
-.muted, .section-caption, .footnote, .stat-caption, .app-caption, .info-label { color: alpha(@window_fg_color, 0.58); }
-.muted { font-size: 12px; }
-.section-caption { font-weight: 700; font-size: 11px; letter-spacing: 1px; margin: 10px 0 5px; }
-.sidebar-button {
-    background: transparent; box-shadow: none; border: 0; border-radius: 12px;
-    padding: 11px 13px; min-height: 18px;
-}
-.sidebar-button:hover { background: alpha(@accent_bg_color, 0.08); }
-.sidebar-button.active { background: alpha(@accent_bg_color, 0.16); color: @accent_color; }
-.sidebar-button-label { font-size: 13px; font-weight: 580; }
-.sidebar-notice { background: alpha(@accent_bg_color, 0.07); border-radius: 15px; padding: 15px; margin-top: 12px; }
-.notice-title { font-size: 12px; font-weight: 700; }
-.main-column { padding: 26px 34px 18px 34px; }
-.hero {
-    background: linear-gradient(118deg, alpha(@accent_bg_color, 0.18), alpha(@success_color, 0.09));
-    border: 1px solid alpha(@accent_bg_color, 0.16);
-    border-radius: 24px; padding: 25px 27px;
-}
-.hero-title { font-weight: 900; font-size: 26px; letter-spacing: -0.4px; }
-.hero-subtitle { font-size: 13px; color: alpha(@window_fg_color, 0.75); }
-.hero-status { color: @accent_color; font-size: 12px; margin-top: 9px; font-weight: 700; }
-.stat-card {
-    background: @card_bg_color; border: 1px solid alpha(@window_fg_color, 0.065);
-    border-radius: 19px; padding: 15px 17px; min-width: 120px;
-}
-.stat-caption { font-size: 12px; font-weight: 650; }
-.stat-number { font-size: 29px; font-weight: 850; }
-.stat-blue { box-shadow: inset 0 3px alpha(@accent_bg_color, 0.55); }
-.stat-violet { box-shadow: inset 0 3px alpha(@purple_3, 0.55); }
-.stat-green { box-shadow: inset 0 3px alpha(@green_3, 0.55); }
-.list-heading { font-weight: 760; font-size: 18px; }
-.search-control, .source-filter { min-height: 39px; border-radius: 12px; }
-.inventory-list {
-    background: @card_bg_color;
-    border: 1px solid alpha(@window_fg_color, 0.065);
-    border-radius: 18px;
-}
-.app-row { border-radius: 0; background: transparent; }
-.app-row:not(:last-child) { border-bottom: 1px solid alpha(@window_fg_color, 0.045); }
-.app-row:hover { background: alpha(@accent_bg_color, 0.065); }
-.app-icon { border-radius: 13px; background: alpha(@accent_bg_color, 0.075); padding: 8px; }
-.app-name { font-size: 14px; font-weight: 730; }
-.app-caption { font-size: 11px; }
-.source-chip { font-size: 11px; font-weight: 750; border-radius: 999px; padding: 6px 10px; }
-.source-apt { color: @accent_color; background: alpha(@accent_bg_color, 0.13); }
-.source-flatpak { color: @green_5; background: alpha(@green_3, 0.14); }
-.source-snap { color: @purple_5; background: alpha(@purple_3, 0.13); }
-.source-appimage { color: @orange_5; background: alpha(@orange_3, 0.13); }
-.source-manual { color: @window_fg_color; background: alpha(@window_fg_color, 0.09); }
-.empty-message { color: alpha(@window_fg_color, 0.57); }
-.footnote { font-size: 11px; margin-top: 4px; }
-.detail-title { font-weight: 750; font-size: 16px; }
-.detail-sheet { padding: 8px 0; }
-.information-row { padding: 11px 4px; border-bottom: 1px solid alpha(@window_fg_color, 0.06); }
-.info-label { font-size: 11px; font-weight: 650; }
-.info-value { font-size: 13px; }
+.brand-name { font-size: 15px; font-weight: 850; letter-spacing: 1px; }
+.muted { color: alpha(@window_fg_color, .55); font-size: 11px; }
+.sidebar-button { background: transparent; border: none; box-shadow: none; border-radius: 11px; padding: 10px 11px; }
+.sidebar-button:hover { background: alpha(@accent_bg_color, .10); }
+.sidebar-button.active { background: alpha(@accent_bg_color, .17); color: @accent_color; }
+.sidebar-button-label { font-size: 13px; font-weight: 650; }
+.main-column { padding: 22px 23px 14px; }
+.list-heading { font-size: 20px; font-weight: 790; }
+.count-label { font-size: 12px; color: alpha(@window_fg_color, .55); }
+.stats-line { font-size: 12px; color: alpha(@window_fg_color, .62); }
+.search-control, .source-filter, .sort-filter { min-height: 38px; border-radius: 12px; }
+.inventory-list { background: @card_bg_color; border-radius: 17px; border: 1px solid alpha(@window_fg_color, .075); }
+.app-row { background: transparent; border-radius: 0; border-bottom: 1px solid alpha(@window_fg_color, .055); }
+.app-row:hover { background: alpha(@accent_bg_color, .075); }
+.app-row:selected { background: alpha(@accent_bg_color, .15); }
+.app-row:focus-visible { outline: 2px solid @accent_color; outline-offset: -2px; }
+.app-icon { border-radius: 12px; background: alpha(@accent_bg_color, .095); padding: 8px; }
+.app-name { font-size: 14px; font-weight: 750; }
+.app-caption { font-size: 11px; color: alpha(@window_fg_color, .54); }
+.source-chip { font-size: 10px; font-weight: 750; border-radius: 99px; padding: 5px 9px; }
+.source-apt { background: alpha(@accent_bg_color, .14); color: @accent_color; }
+.source-flatpak { background: alpha(@green_3, .14); color: @green_5; }
+.source-snap { background: alpha(@purple_3, .14); color: @purple_5; }
+.source-appimage { background: alpha(@orange_3, .14); color: @orange_5; }
+.source-manual { background: alpha(@window_fg_color, .10); color: @window_fg_color; }
+.empty-message { color: alpha(@window_fg_color, .55); }
+.detail-panel { background: @card_bg_color; border-left: 1px solid alpha(@window_fg_color, .07); }
+.detail-header { padding: 12px 15px; border-bottom: 1px solid alpha(@window_fg_color, .065); }
+.panel-title { font-size: 15px; font-weight: 760; }
+.detail-body { padding: 20px 17px; }
+.detail-name { font-weight: 780; font-size: 17px; }
+.information-row { padding: 9px 0; border-bottom: 1px solid alpha(@window_fg_color, .055); }
+.info-label { font-size: 11px; color: alpha(@window_fg_color, .62); }
+.info-value { font-size: 12px; }

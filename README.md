@@ -2,16 +2,25 @@
 
 > **装了什么，一眼看清。** A compact, privacy-first Linux software inventory built with Rust + GTK4/libadwaita.
 
-![version](https://img.shields.io/badge/version-0.1.0--preview-5275dc) ![platform](https://img.shields.io/badge/platform-Linux-2aa88a) ![license](https://img.shields.io/badge/license-MIT-667085)
+![version](https://img.shields.io/badge/version-0.1.1--preview-5275dc) ![platform](https://img.shields.io/badge/platform-Linux-2aa88a) ![license](https://img.shields.io/badge/license-MIT-667085)
 
 PakScope 是面向 Ubuntu / GNOME 用户的轻量开源应用清单。它不是另一个软件商店：目标是回答「我电脑安装了什么软件、来自哪里、实际文件在哪、卸载会影响什么」。
 
-**v0.1 是只读预览版，绝对不执行卸载、删除或自动清理。** 安全卸载将在验证准确性后独立开发。
+**v0.1.1 是只读预览版，绝对不执行卸载、删除或自动清理。** 安全卸载将在验证准确性后独立开发。
+
+## v0.1.1 界面与交互更新
+
+- 左侧仅保留操作导航：已安装应用、重新扫描、导出 JSON、扫描诊断，以及底部设置；不再重复列出来源。
+- GTK4 Paned 支持拖动左侧工具栏宽度；移除欢迎横幅、占位状态卡和永久解释文本。
+- 搜索、来源筛选和排序集中在内容区；单击列表行或通过键盘激活均可展示详情。
+- 详情位于右侧可关闭面板；窄窗口用独立详情窗口。包含复制路径、打开目录、查看 APT 文件清单。
+- 左下角设置提供主题切换及恢复侧边栏宽度。扫描诊断和导出菜单可直接操作。
+- APT/DEB 不再把通用 `/usr` 冒充真实安装目录：仅在能确定启动命令目标时展示执行文件路径，其他情况标注未确定。
 
 ## ✨ 当前实现
 
-- 原生 GTK4 + libadwaita 界面：圆角卡片、渐变欢迎区、彩色来源标签、浅/深色模式跟随 GNOME。
-- 中文优先：统一软件列表、应用名称关键词搜索、软件来源过滤、详情弹窗、复制路径、打开目录。
+- 原生 GTK4 + libadwaita 界面：紧凑工具栏、圆角列表、彩色来源标签、浅/深色模式跟随 GNOME。
+- 中文优先：统一软件列表、应用名称关键词搜索、软件来源过滤、右侧详情面板、复制路径、打开目录。
 - APT/DEB：检查 `/usr/share/applications` 等目录中的 `.desktop` 文件，使用 `/var/lib/dpkg/info/*.list` 匹配文件所有者、`dpkg-query` 读取版本和包报告的安装大小。
 - Snap：匹配 `snap list` 的安装记录与 `/var/lib/snapd/desktop/applications` 中可见的桌面启动器。
 - Flatpak：读取 `flatpak list --app`。不含 runtimes。
@@ -51,13 +60,13 @@ cargo run --no-default-features --bin pakscope-scan -- > apps.tsv
 
 ```bash
 bash scripts/build-deb.sh
-# 输出在 dist/pakscope_0.1.0_amd64.deb（以当前架构为准）
+# 输出在 dist/pakscope_0.1.1_amd64.deb（以当前架构为准）
 ```
 
 DEB **不会**捆绑 GTK 或 libadwaita 巨型运行库。依赖系统组件，以减小包体积。首次发行体积未实测，不能承诺特定 MB 数值。自建包在本地安装前请先测试：
 
 ```bash
-sudo apt install ./dist/pakscope_0.1.0_$(dpkg --print-architecture).deb
+sudo apt install ./dist/pakscope_0.1.1_$(dpkg --print-architecture).deb
 ```
 
 ## 🖥 界面预览
