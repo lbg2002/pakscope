@@ -1,0 +1,35 @@
+[package]
+name = "pakscope"
+version = "0.1.0"
+edition = "2021"
+authors = ["PakScope Contributors"]
+description = "Lightweight read-only inventory of Linux desktop applications"
+license = "MIT"
+repository = "https://github.com/lbg2002/pakscope"
+keywords = ["linux", "gtk", "packages", "inventory"]
+
+[features]
+default = ["gui"]
+gui = ["dep:gtk", "dep:adw"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+gtk = { package = "gtk4", version = "0.9", features = ["v4_12"], optional = true }
+adw = { package = "libadwaita", version = "0.7", optional = true }
+
+[[bin]]
+name = "pakscope"
+path = "src/main.rs"
+required-features = ["gui"]
+
+[[bin]]
+name = "pakscope-scan"
+path = "src/bin/pakscope-scan.rs"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+opt-level = "z"
+strip = "symbols"
+panic = "abort"
