@@ -1,12 +1,51 @@
+<div align="center">
+
 # 📦 PakScope · 包览
 
-> **装了什么，一眼看清。** A compact, privacy-first Linux software inventory built with Rust + GTK4/libadwaita.
+### Ubuntu / GNOME 已安装软件管理与来源检查器
 
-![version](https://img.shields.io/badge/version-0.1.1--preview-5275dc) ![platform](https://img.shields.io/badge/platform-Linux-2aa88a) ![license](https://img.shields.io/badge/license-MIT-667085)
+**电脑装了哪些应用？来自 APT、Snap、Flatpak 还是 AppImage？点开就能看清。**
 
-PakScope 是面向 Ubuntu / GNOME 用户的轻量开源应用清单。它不是另一个软件商店：目标是回答「我电脑安装了什么软件、来自哪里、实际文件在哪、卸载会影响什么」。
+*Lightweight Linux application inventory and package origin inspector, built with Rust + GTK4 / Libadwaita.*
 
-**v0.1.1 是只读预览版，绝对不执行卸载、删除或自动清理。** 安全卸载将在验证准确性后独立开发。
+![Version](https://img.shields.io/badge/Version-v0.1.1%20Preview-6e8cce)
+![Ubuntu](https://img.shields.io/badge/Desktop-Ubuntu%20%7C%20GNOME-7591bc)
+![Rust](https://img.shields.io/badge/Core-Rust%20%2B%20GTK4-8b84d6)
+![Privacy](https://img.shields.io/badge/Mode-Local%20%2F%20Read--only-4ea18f)
+![License](https://img.shields.io/badge/License-MIT-81909e)
+
+**[⬇ 下载 Ubuntu amd64 预览包](https://github.com/lbg2002/pakscope/actions/runs/38252897483)** · [👀 界面预览](docs/UI_PREVIEW.html) · [✨ 功能说明](#-当前实现) · [🔧 本地构建](#-构建推荐-ubuntu-2604--gnome)
+
+</div>
+
+> **发布状态：** v0.1.1 已有 GitHub Actions 提供的 Ubuntu 构建包，但本仓库**暂未发布正式 GitHub Release**。下载入口位于 Actions 工作流的 Artifacts 区域，通常需要登录 GitHub，并可能在保留期后过期。当前版本**仅查看和导出，不会卸载、删除或自动清理任何软件**。
+
+## 🧭 三步看清已安装应用
+
+```mermaid
+flowchart LR
+    A["打开 PakScope"] --> B["扫描 APT · Snap · Flatpak · AppImage"]
+    B --> C["搜索 / 筛选软件来源"]
+    C --> D["查看版本、启动器、安装文件与来源"]
+```
+
+| 🔍 **一站式查看** | 🧭 **来源与详情** | 🔐 **安全只读** |
+| :--- | :--- | :--- |
+| 搜索已安装的桌面应用，按来源筛选 | 查看版本、安装文件、启动入口、包归属 | 完全本地运行，不要求 sudo，不会执行卸载 |
+| 🪟 **GNOME 风格** | ⚡ **Rust 后台扫描** | 📤 **诊断与导出** |
+| GTK4/Libadwaita、侧栏拖动、自适应详情面板 | 后台扫描可刷新，不阻塞界面 | 支持 JSON/TSV，便于记录软件环境 |
+
+## ⬇️ 安装 Ubuntu 预览版
+
+打开 [**Build and verify · 已通过构建**](https://github.com/lbg2002/pakscope/actions/runs/38252897483)，在页面底部 Artifacts 下载 **`pakscope-ubuntu-amd64-preview`**，解压后找到 `.deb`，在对应目录运行：
+
+```bash
+sudo apt install ./pakscope_*.deb
+```
+
+Ubuntu/GNOME 建议从应用菜单启动 PakScope，也可按下方源码构建说明运行。安装时 apt 可能需要系统 GTK4/Libadwaita 运行依赖；**应用本身无需管理员权限启动**。
+
+**注意扫描范围：** PakScope 优先呈现具有桌面启动器的图形应用，不等同于列出 `dpkg -l` 中的全部系统包与驱动。源码中的 [交互设计预览](docs/UI_PREVIEW.html) 使用示例数据，不能代替实际运行截图。
 
 ## v0.1.1 界面与交互更新
 
