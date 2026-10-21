@@ -25,9 +25,9 @@ Priority: optional
 Architecture: $ARCH
 Maintainer: PakScope Contributors <noreply@github.com>
 Depends: libgtk-4-1 (>= 4.12), libadwaita-1-0 (>= 1.4)
-Description: Lightweight read-only Linux application inventory
+Description: Lightweight Linux desktop inventory and safe manager
  Discover installed desktop applications from APT, Snap, Flatpak and
- selected AppImage directories without elevated privileges.
+ selected AppImage directories. Removal actions require confirmation.
 EOC
 dpkg-deb --build --root-owner-group "$STAGING" "dist/pakscope_${VERSION}_${ARCH}.deb"
 echo "Created dist/pakscope_${VERSION}_${ARCH}.deb"
