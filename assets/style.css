@@ -1,4 +1,4 @@
-/* PakScope 0.1.1: dense native libadwaita layout, no ornamental banners. */
+/* PakScope 0.2: dense native ink-and-jade layout. */
 .sidebar {
     background: alpha(@accent_bg_color, .035);
     border-right: 1px solid alpha(@window_fg_color, .055);
@@ -10,7 +10,7 @@
 .sidebar-button:hover { background: alpha(@accent_bg_color, .10); }
 .sidebar-button.active { background: alpha(@accent_bg_color, .17); color: @accent_color; }
 .sidebar-button-label { font-size: 13px; font-weight: 650; }
-.main-column { padding: 22px 23px 14px; }
+.main-column { padding: 15px 17px 10px; }
 .list-heading { font-size: 20px; font-weight: 790; }
 .count-label { font-size: 12px; color: alpha(@window_fg_color, .55); }
 .stats-line { font-size: 12px; color: alpha(@window_fg_color, .62); }
@@ -33,8 +33,12 @@
 .detail-panel { background: @card_bg_color; border-left: 1px solid alpha(@window_fg_color, .07); }
 .detail-header { padding: 12px 15px; border-bottom: 1px solid alpha(@window_fg_color, .065); }
 .panel-title { font-size: 15px; font-weight: 760; }
-.detail-body { padding: 20px 17px; }
+.detail-body { padding: 15px 14px; }
 .detail-name { font-weight: 780; font-size: 17px; }
-.information-row { padding: 9px 0; border-bottom: 1px solid alpha(@window_fg_color, .055); }
+.information-row { padding: 6px 0; border-bottom: 1px solid alpha(@window_fg_color, .055); }
 .info-label { font-size: 11px; color: alpha(@window_fg_color, .62); }
 .info-value { font-size: 12px; }
+
+.command-preview { background: alpha(@accent_bg_color, .065); padding: 13px 15px; border-radius: 11px; border-left: 3px solid #658d83; font-family: monospace; font-size: 12px; }
+.destructive-action { color: @destructive_color; }
+.destructive-action:hover { background: alpha(@destructive_color, .09); }
