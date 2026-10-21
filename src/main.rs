@@ -175,8 +175,8 @@ fn detail_content(parent: &adw::ApplicationWindow, app: &AppEntry, refresh: &gtk
     if app.source != Source::Manual {
         let remove = gtk::Button::with_label("卸载");
         remove.add_css_class("destructive-action");
-        let (win, item, refresh) = (parent.clone(), app.clone(), refresh.clone());
-        remove.connect_clicked(move |_| uninstall_ui::open(&win, &item, RemovalMode::KeepConfig, &refresh));
+        let (win, item, refresh_for_remove) = (parent.clone(), app.clone(), refresh.clone());
+        remove.connect_clicked(move |_| uninstall_ui::open(&win, &item, RemovalMode::KeepConfig, &refresh_for_remove));
         actions.append(&remove);
         if app.source == Source::Apt {
             let purge = gtk::Button::with_label("清除配置并卸载");
