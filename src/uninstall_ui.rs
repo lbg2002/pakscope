@@ -124,7 +124,7 @@ pub fn open(parent: &adw::ApplicationWindow, app: &AppEntry,
             // Recheck just before changing the system; refuse if the APT plan drifted.
             let result = if planned.requires_apt_preview {
                 match apt_preview(&item, mode) {
-                    Ok(actual) if Some(actual) == expected => execute(&planned),
+                    Ok(actual) if Some(actual.as_str()) == expected.as_deref() => execute(&planned),
                     Ok(_) => Err("软件包依赖情况已改变，请重新打开并确认卸载。".into()),
                     Err(err) => Err(format!("二次模拟失败：{err}")),
                 }
