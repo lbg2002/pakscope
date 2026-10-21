@@ -1,9 +1,9 @@
 [package]
 name = "pakscope"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 authors = ["PakScope Contributors"]
-description = "Lightweight read-only inventory of Linux desktop applications"
+description = "Lightweight Linux desktop application inventory and safe package management"
 license = "MIT"
 repository = "https://github.com/lbg2002/pakscope"
 keywords = ["linux", "gtk", "packages", "inventory"]

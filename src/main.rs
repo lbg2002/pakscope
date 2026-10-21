@@ -1,9 +1,10 @@
-//! PakScope 0.1.1 — compact, local-only Linux desktop inventory.
-//! This binary never changes or uninstalls installed packages.
+//! PakScope 0.2 — compact native Linux application management.
+mod uninstall_ui;
 use adw::gtk;
 use adw::prelude::*;
 use gtk::glib;
 use pakscope::scanner::{scan_apps, AppEntry, Source};
+use pakscope::operations::RemovalMode;
 use std::cell::RefCell;
 use std::path::Path;
 use std::rc::Rc;
@@ -95,7 +96,7 @@ fn show_dpkg_file_list(parent: &adw::ApplicationWindow, app: &AppEntry) {
     dialog.set_child(Some(&scroll));
     dialog.present();
 }
-fn detail_content(parent: &adw::ApplicationWindow, app: &AppEntry) -> gtk::Box {
+fn detail_content(parent: &adw::ApplicationWindow, app: &AppEntry, refresh: &gtk::Button) -> gtk::Box {
     let body = gtk::Box::new(gtk::Orientation::Vertical, 13);
     body.add_css_class("detail-body");
     let identity = gtk::Box::new(gtk::Orientation::Horizontal, 12);
@@ -125,8 +126,10 @@ fn detail_content(parent: &adw::ApplicationWindow, app: &AppEntry) -> gtk::Box {
         ("启动命令（仅展示）", app.command.as_str()),
         ("安装体积", size.as_str()),
     ] { body.append(&info_row(title, value)); }
-    let actions = gtk::Box::new(gtk::Orientation::Horizontal, 7);
-    actions.set_homogeneous(false);
+    let actions = gtk::FlowBox::new();
+    actions.set_selection_mode(gtk::SelectionMode::None);
+    actions.set_column_spacing(7);
+    actions.set_row_spacing(7);
     let copy = gtk::Button::with_label("复制路径");
     copy.add_css_class("pill");
     copy.set_sensitive(!app.path.is_empty());
@@ -169,18 +172,31 @@ fn detail_content(parent: &adw::ApplicationWindow, app: &AppEntry) -> gtk::Box {
         });
         actions.append(&launcher);
     }
+    if app.source != Source::Manual {
+        let remove = gtk::Button::with_label("卸载");
+        remove.add_css_class("destructive-action");
+        let (win, item, refresh_for_remove) = (parent.clone(), app.clone(), refresh.clone());
+        remove.connect_clicked(move |_| uninstall_ui::open(&win, &item, RemovalMode::KeepConfig, &refresh_for_remove));
+        actions.append(&remove);
+        if app.source == Source::Apt {
+            let purge = gtk::Button::with_label("清除配置并卸载");
+            let (win, item, refresh) = (parent.clone(), app.clone(), refresh.clone());
+            purge.connect_clicked(move |_| uninstall_ui::open(&win, &item, RemovalMode::Purge, &refresh));
+            actions.append(&purge);
+        }
+    }
     body.append(&actions);
     body
 }
 fn show_details(parent: &adw::ApplicationWindow, panel: &gtk::Box, pane: &gtk::Paned,
-    row_list: &gtk::ListBox, app: &AppEntry) {
+    row_list: &gtk::ListBox, app: &AppEntry, refresh: &gtk::Button) {
     // On small windows, use a transient detail window instead of crushing the inventory.
     if parent.width() > 0 && parent.width() < 880 {
         let dialog = gtk::Window::builder().transient_for(parent).modal(true)
             .title(format!("{} · 应用详情", app.name))
             .default_width(470).default_height(600).build();
         let scroll = gtk::ScrolledWindow::new();
-        scroll.set_child(Some(&detail_content(parent, app)));
+        scroll.set_child(Some(&detail_content(parent, app, refresh)));
         dialog.set_child(Some(&scroll));
         dialog.present();
         return;
@@ -205,7 +221,7 @@ fn show_details(parent: &adw::ApplicationWindow, panel: &gtk::Box, pane: &gtk::P
     panel.append(&head);
     let scroll = gtk::ScrolledWindow::new();
     scroll.set_vexpand(true);
-    scroll.set_child(Some(&detail_content(parent, app)));
+    scroll.set_child(Some(&detail_content(parent, app, refresh)));
     panel.append(&scroll);
     panel.set_visible(true);
     // Default to a 340 px details pane; users can drag the separator.
@@ -297,10 +313,10 @@ fn settings_dialog(window: &adw::ApplicationWindow, sidebar: &gtk::Paned) {
     let p = sidebar.clone();
     reset.connect_clicked(move |_| p.set_position(210));
     layout.append(&reset);
-    let about = gtk::Button::with_label("关于 PakScope 0.1.1");
+    let about = gtk::Button::with_label("关于 PakScope 0.2.0");
     let parent = window.clone();
     about.connect_clicked(move |_| message(&parent, "PakScope · 包览",
-        "版本 0.1.1 · 本地软件清单管理器。当前版本只读，不执行任何卸载操作。"));
+        "版本 0.2.0 · 轻量软件管理器。卸载前预览命令，APT 模拟检查影响。"));
     layout.append(&about);
     dialog.set_child(Some(&layout));
     dialog.present();
@@ -325,7 +341,7 @@ fn export_json(window: &adw::ApplicationWindow, data: &Rc<RefCell<Vec<AppEntry>>
     });
 }
 fn diagnose(window: &adw::ApplicationWindow, data: &Rc<RefCell<Vec<AppEntry>>>, scan_status: &gtk::Label) {
-    let text = format!("{}\n\n{}\n\nAPT/DEB 仅展示拥有桌面启动器的软件；部分手动安装应用无法确定精确来源。\n本程序不执行软件卸载。",
+    let text = format!("{}\n\n{}\n\nAPT/DEB 目前仅展示拥有桌面启动器的软件；来源不明的软件不支持自动卸载。",
         scan_status.text(), summary(&data.borrow()));
     message(window, "扫描诊断", &text);
 }
@@ -377,7 +393,7 @@ fn build_ui(app: &adw::Application) {
         .title("PakScope · 包览").default_width(1200).default_height(760).build();
     let toolbar = adw::ToolbarView::new();
     let header = adw::HeaderBar::new();
-    header.set_title_widget(Some(&adw::WindowTitle::new("PakScope · 包览", "让已安装的软件一目了然")));
+    header.set_title_widget(Some(&adw::WindowTitle::new("PakScope · 包览", "")));
     let refresh = icon_button("view-refresh-symbolic", "重新扫描");
     header.pack_end(&refresh);
     toolbar.add_top_bar(&header);
@@ -394,7 +410,6 @@ fn build_ui(app: &adw::Application) {
     brand.append(&image("package-x-generic-symbolic", 30));
     let identity = gtk::Box::new(gtk::Orientation::Vertical, 4);
     identity.append(&label("PAKSCOPE", "brand-name"));
-    identity.append(&label("让已安装的软件一目了然", "muted"));
     brand.append(&identity);
     sidebar.append(&brand);
     let applications = sidebar_action("已安装应用", "view-list-symbolic");
@@ -469,21 +484,21 @@ fn build_ui(app: &adw::Application) {
     let visible_items = Rc::new(RefCell::new(Vec::<AppEntry>::new()));
     // Selection works on a single mouse click. GTK also handles arrow-key selection.
     {
-        let (window, panel, pane, rows, items) = (window.clone(), panel.clone(), content_pane.clone(), list.clone(), visible_items.clone());
+        let (window, panel, pane, rows, items, refresh) = (window.clone(), panel.clone(), content_pane.clone(), list.clone(), visible_items.clone(), refresh.clone());
         list.connect_row_selected(move |_, row| {
             if let Some(row) = row {
                 if let Some(app) = items.borrow().get(row.index() as usize) {
-                    show_details(&window, &panel, &pane, &rows, app);
+                    show_details(&window, &panel, &pane, &rows, app, &refresh);
                 }
             }
         });
     }
     // Enter/Space activation also opens details, including an already selected row.
     {
-        let (window, panel, pane, rows, items) = (window.clone(), panel.clone(), content_pane.clone(), list.clone(), visible_items.clone());
+        let (window, panel, pane, rows, items, refresh) = (window.clone(), panel.clone(), content_pane.clone(), list.clone(), visible_items.clone(), refresh.clone());
         list.connect_row_activated(move |_, row| {
             if let Some(app) = items.borrow().get(row.index() as usize) {
-                show_details(&window, &panel, &pane, &rows, app);
+                show_details(&window, &panel, &pane, &rows, app, &refresh);
             }
         });
     }
