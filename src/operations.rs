@@ -31,7 +31,7 @@ fn valid_id(id: &str, source: &Source) -> bool {
             parts.next().is_none()
                 && name.starts_with(|c: char| c.is_ascii_lowercase() || c.is_ascii_digit())
                 && name.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || ".+-".contains(c))
-                && !name.ends_with(['+', '-'])
+                && !name.ends_with('+') && !name.ends_with('-')
                 && arch.map(|a| !a.is_empty() && a.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')).unwrap_or(true)
         }
         Source::Snap => id.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-'),
