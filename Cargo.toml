@@ -1,12 +1,12 @@
 [package]
 name = "pakscope"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["PakScope Contributors"]
-description = "Lightweight Linux desktop application inventory and safe package management"
+description = "Lightweight Linux desktop application inventory, safe uninstaller, and release updater"
 license = "MIT"
 repository = "https://github.com/lbg2002/pakscope"
-keywords = ["linux", "gtk", "packages", "inventory"]
+keywords = ["linux", "gtk", "packages", "inventory", "uninstaller"]
 
 [features]
 default = ["gui"]
